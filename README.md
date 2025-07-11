@@ -17,7 +17,7 @@ A cute pixel-style multi-note manager wrapped in an Electron desktop app.
 
 A ready-made portable ZIP is available on Google Drive:
 
-[Download PixelStickyNotes (ZIP)](https://drive.google.com/file/d/1xr53HPmKEvgh1H_MtKN7K7IYZ98jKIeU/view?usp=drive_link)
+[Download PixelStickyNotes (ZIP)](https://drive.google.com/file/d/1t6sTxoYXvgrlKd2R3JbJuHLo873bNjfi/view?usp=drive_link)
 
 Unzip and double‐click `PixelStickyNotes.exe` to run.
 
