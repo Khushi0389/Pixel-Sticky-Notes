@@ -29,5 +29,8 @@
       "icon": "tray-icon.ico",
       "forceCodeSigning": false
     }
+  },
+  "dependencies": {
+    "electron-store": "^10.1.0"
   }
 }

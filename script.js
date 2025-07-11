@@ -1,14 +1,15 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Globals
   const container = document.getElementById('notesContainer');
   const addBtn    = document.getElementById('addNote');
 
-  let notes = JSON.parse(localStorage.getItem('pixelNotes') || '[]');
-  let topZ = 1;
+  // Load from electron-store via preload
+  let notes = await window.store.getNotes();
+  let topZ  = 1;
 
-  // Persist notes array
-  function saveNotes() {
-    localStorage.setItem('pixelNotes', JSON.stringify(notes));
+  // Persist notes array back to disk
+  async function saveNotes() {
+    await window.store.saveNotes(notes);
   }
 
   // Create one note DOM element
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Bring to front on mousedown
+    // Bring to front
     el.addEventListener('mousedown', () => {
       topZ++;
       el.style.zIndex = topZ;
@@ -38,43 +39,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Text auto-save
     const ta = el.querySelector('textarea');
-    ta.addEventListener('input', e => {
+    ta.addEventListener('input', async e => {
       note.text = e.target.value;
-      saveNotes();
+      await saveNotes();
     });
 
     // Delete note
-    el.querySelector('.del').addEventListener('click', () => {
+    el.querySelector('.del').addEventListener('click', async () => {
       notes = notes.filter(n => n.id !== note.id);
-      saveNotes();
+      await saveNotes();
       render();
     });
 
-    // Change background color via a hidden color input
+    // Change background color
     el.querySelector('.color').addEventListener('click', () => {
-      // create a one-off color picker
       const picker = document.createElement('input');
       picker.type = 'color';
-      // initialize with current bg (convert to #rrggbb if needed)
       picker.value = note.bg.length === 7 ? note.bg : '#fff9c4';
       picker.style.position = 'fixed';
       picker.style.left = '-9999px';
       document.body.appendChild(picker);
-      picker.addEventListener('input', () => {
+
+      picker.addEventListener('input', async () => {
         note.bg = picker.value;
-        saveNotes();
+        await saveNotes();
         render();
       });
-      // simulate click
+
       picker.click();
-      // cleanup after use
       picker.addEventListener('blur', () => picker.remove());
     });
 
     // Drag-to-move
     let dragging = false, offsetX = 0, offsetY = 0;
     el.addEventListener('mousedown', e => {
-      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+      if (['TEXTAREA','BUTTON'].includes(e.target.tagName)) return;
       dragging = true;
       offsetX  = e.clientX - el.offsetLeft;
       offsetY  = e.clientY - el.offsetTop;
@@ -86,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.left = note.x + 'px';
       el.style.top  = note.y + 'px';
     });
-    document.addEventListener('mouseup', () => {
-      if (dragging) saveNotes();
+    document.addEventListener('mouseup', async () => {
+      if (dragging) await saveNotes();
       dragging = false;
     });
 
@@ -103,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Add new note
-  addBtn.addEventListener('click', () => {
+  addBtn.addEventListener('click', async () => {
     const id = Date.now();
     notes.push({
       id,
@@ -113,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       text: '',
       bg: '#fff9c4'
     });
-    saveNotes();
+    await saveNotes();
     render();
   });
 

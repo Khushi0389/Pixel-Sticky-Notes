@@ -1,6 +1,17 @@
 // main.js
-const { app, BrowserWindow, Tray, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
 const path = require('path');
+const Store = require('electron-store').default;
+
+
+const store = new Store({ name: 'pixel-notes' });
+
+ipcMain.handle('store-get-notes', () => {
+  return store.get('notes', []);
+});
+ipcMain.handle('store-save-notes', (event, notes) => {
+  store.set('notes', notes);
+});
 
 let mainWindow, tray;
 const isMac = process.platform === 'darwin';
