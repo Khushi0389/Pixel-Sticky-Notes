@@ -1,0 +1,33 @@
+{
+  "name": "pixel-sticky-notes",
+  "version": "1.0.0",
+  "description": "Cute pixel-style sticky-note manager in an Electron desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^37.2.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.yourname.pixelstickynotes",
+    "productName": "PixelStickyNotes",
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "style.css",
+      "script.js",
+      "tray-icon.ico"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "tray-icon.ico",
+      "forceCodeSigning": false
+    }
+  }
+}
